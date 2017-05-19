@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=F75484f6486f962ed1c28985b9ca68c0"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js"></script>
+    <script src="my_BaiduMap.js"></script>
+    <script src="BaiDuMapObj.js"></script>
+    <script src="BaiduMapStyle.js"></script>
+    <script src="/Common/js/6cweb/LoadPubFile_base.js" type="text/javascript"></script>
+
+    <script src="/C3/PC/MRTA/js/C3AlarmImg_big.js" type="text/javascript"></script>
+    <script src="/Common/js/6cweb/mydate.js" type="text/javascript"></script>
+    <link href="/Common/css/gis/GIS.css" rel="stylesheet" />
+    <script type="text/javascript">
+        loadControl("mytree");
+        loadControl("jqueryUI");
+        loadControl("multiSelect");
+        loadControl("mySelectTree");
+        loadControl("hint");
+        loadControl("elevatezoom");
+        loadControl("kendo");
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            var _h = (parseInt($(window).height())) / 4;
+            var _w = parseInt($(window).width()) / 4;
+
+            $("#kjg").elevateZoom({ zoomWindowPosition: 05, zoomWindowWidth: _w - 8, zoomWindowHeight: _h - 8 });
+            var _Divh = (parseInt($(window).height()) - 2);
+            var _Divw = parseInt($(window).width()) + 12;
+            $("#mapDiv").width(_Divw-20).height(_Divh);
+            $("#C3Alarm").width(_Divw / 4).height(_Divh);
+            $("#C3Alarm_1").width(_w).height(_h);
+            $("#C3Alarm_2").width(_w).height(_h);
+            $("#C3Alarm_3").width(_w).height(_h);
+            $("#C3Alarm_4").width(_w).height(_h);
+            $("#linechart").width(_w).height(_h);
+
+            $("#ImgTypeBox").css("bottom", "10px");
+            // $('#iframe_task').attr('src', '/Common/MTask/TaskForm.htm?id=' + GetQueryString("alarmid") + '&type=openFaultTask&openType=&ShowSimple=1')
+
+            $("#hw").width(_w).height(_h);
+            $("#kjg").width(_w).height(_h);
+
+            BindMap("mapDiv", "8");
+            map.setMapStyle({ styleJson: myStyleJson1 });
+            GetPosition("", "", "", false);
+            GetSms("", "", "", "", "");
+            GetAlarm("", "", "", "", "", "", "", "", "", true, true, true, true, true, true, true, true)
+            MapAddRigthClick();
+        });
+    </script>
+</head>
+<body>
+    <div style="width: 99%; height: 600px; border: 1px solid gray; text-align: center;
+                    z-index: 1" id="mapDiv">
+    </div>
+    <div id="C3Alarm" style="display: none; position: absolute;  right: 0px; top:0px;
+        z-index: 410; background-color: #333333;">
+        <div style="position: absolute; left: -25px; top: 10px;">
+            <a href="#" onclick="ColseC3AlarmInfo()" style="font-size: 30px; color: White;">X</a>
+        </div>
+        <div id='C3Alarm_1' style="overflow-y: auto; overflow-x: hidden;">
+            <div class="box-content">
+                <div id="tablejbxx">
+                    <table class="table1 fg_blue" id="tableinfo" style="color: White;">
+                        <tr>
+                            <td colspan="2">
+                                设备编号：<strong><span id="trainNo"></span> </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                时间：<strong><span id="raised_time"></span> </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                地点：<strong><span id="WZ"></span> </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                报警温度：<strong><span id="wendu"></span><span>℃</span></strong>
+                            </td>
+                            <td style="">
+                                环境温度：<strong><span id="hjwendu"></span><span>℃</span></strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                导高值：<strong><span id="dgz"></span><span>mm</span></strong>
+                            </td>
+                            <td>
+                                拉出值：<strong><span id="lcz"></span><span>mm</span></strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%;">
+                                速度：<strong><span id="sudu"></span><span>km/h </span></strong>
+                            </td>
+                            <td style="width: 50%;">
+                                弓位置：<strong><span id="BOW_TYPE"></span> </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                报警级别：<strong> <span id="severity"></span></strong>
+                            </td>
+                            <td>
+                                报警状态：<strong><span id="status"></span> </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left" colspan="2">
+                                报警类型：<strong> <span id="SUMMARYDIC"></span></strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">
+                                <input type="submit" name="E_btnOk2" value="报警确认" id="E_btnOk2" title="确认疑似缺陷属实"
+                                       class="btn btn-primary " />
+                                <input type="submit" name="E_btnCan2" value="报警取消" id="E_btnCan2" title="疑似缺陷属于误报，取消该缺陷显示"
+                                       class="btn btn-primary" />
+                            </td>
+                        </tr>
+                        <tr style="display: none">
+                            <td colspan="3">
+                                报警分析： <strong><span id="txtDefect"></span></strong>
+                            </td>
+                        </tr>
+                        <tr style="display: none">
+                            <td colspan="3">
+                                处理建议： <strong><span id="txtAdvice"></span></strong>
+                            </td>
+                        </tr>
+                        <tr style="display: none">
+                            <td colspan="3">
+                                备注： <strong><span id="txtNote"></span></strong><a href="#" onclick="Map()">
+                                    <img src='img/roll.gif'>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr style="display: none">
+                            <td style="width: 300px">
+                                报告人：<strong><span id="txtReporter"></span></strong>
+                            </td>
+                            <td colspan="2">
+                                报告日期： <strong><span id="reportdate"></span></strong>
+                            </td>
+                        </tr>
+                        <tr style="display: none">
+                            <td style="width: 100px">
+                                设备厂商：<strong><span id="vendor"></span> </strong>线路：<strong>
+                                    <span id="wwdw"></span>
+                                </strong>
+                            </td>
+                            <td>
+                                区站：<strong><span id="QZ"></span> </strong>
+                            </td>
+                            <td>
+                                桥隧：<strong><span id="brige"></span> </strong>
+                            </td>
+                            <td style="display: none">
+                                杆号：<strong><span id="pole_number"></span> </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="display: none">
+                                供电段： <strong><span id="GDD"></span></strong>
+                            </td>
+                            <td style="display: none">
+                                供电车间：<strong><span id="CJ"></span> </strong>
+                            </td>
+                            <td style="display: none">
+                                供电班组：<strong><span id="BZ"></span> </strong>
+                            </td>
+                            <td style="width: 200px; display: none">
+                                公里标：<strong><span id="km_mark"></span></strong> 状态变化时间：<strong>
+                                    <span id="status_time"></span>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr id="jltr" style="display: none;">
+                            <td style="width: 100px">
+                                交路号：<strong><span id="jlh"></span></strong>
+                            </td>
+                            <td colspan="2">
+                                运用区段：<strong><span id="crossing_no"></span></strong> 线路：<strong>
+                                    <span id="line_code"></span>
+                                </strong>车站：<strong><span id="STATION_NO"></span> </strong>
+                                <input id="taskid" type="hidden" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="text-align: center; z-index: 9999; display: none">
+                <div id="irvAA">
+                </div>
+            </div>
+        </div>
+        <div id='C3Alarm_2'>
+            <img src='' id="hw">
+        </div>
+        <div id='C3Alarm_3'>
+            <img src='' id="kjg">
+        </div>
+        <div id='C3Alarm_4'>
+            <div id="linechart" style="background: center no-repeat url('/C3/img/world-map.png');">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="/Common/MAlarmMonitoring/js/AlarmSureBox.js"></script>
+<script>
+    $(function () {
+        LoadSureBox('3C', GetQueryString("alarmid"))
+    })
+
+</script>

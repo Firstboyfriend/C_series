@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Cloud Zoom</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="../LoadPubFile_base.js" type="text/javascript"></script>
+         <script>         
+             loadControl("cloudzoom");
+        </script>
+        <script type="text/javascript">
+            //  CloudZoom.quickStart();
+
+
+            $(function () {
+
+
+                changeImg("img1", "images/small/image1.jpg", "images/large/image1.jpg")
+
+
+                $('#btn1').click(function () {
+                    $('#img1').show();
+                    changeImg("img1", "images/small/image1.jpg", "images/large/image1.jpg")
+
+                })
+
+                $('#btn2').click(function () {
+
+
+                    $('#img1').show();
+                    changeImg("img1", "images/small/image2.jpg", "images/large/image2.jpg")
+                })
+            })
+
+
+            function changeImg(ImgID, s_img, big_img) {
+
+
+
+                var myInstance = $('#' + ImgID).data('CloudZoom');
+                if (myInstance != undefined) {
+                    myInstance.destroy();
+                }
+
+                var options = {
+                    zoomImage: big_img,
+                    zoomSizeMode: 'image',
+                    zoomPosition: 4,
+                    zoomOffsetX: 0,
+                    zoomOffsetY: 0,
+                    zoomWidth: 100,
+                    zoomHeight: 100
+                };
+
+                $('#' + ImgID).attr('src', s_img);
+                $('#' + ImgID).CloudZoom(options);
+
+            }
+
+        </script>    
+    </head>
+    
+    <body>
+
+    
+        <div style=" position:absolute; top:600px; left:500px">
+            <img id="img1" class="cloudzoom" />
+        </div>
+
+        <input id="btn1" type="button" value="图1"/>
+        <input id="btn2" type="button" value="图2" />
+      
+
+    </body>
+
+</html>
